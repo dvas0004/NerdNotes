@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Nerd Notes",
+  "name": "Nerd Notes - a collection of tech / dev notes",
   "icons": [
     {
       "src": "favicon.ico",

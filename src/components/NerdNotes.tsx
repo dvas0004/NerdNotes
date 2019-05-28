@@ -30,7 +30,7 @@ const NerdNotes = (props: props) => {
                         {
                             data.repository.issues.nodes.map( (node: any) => 
                                 <GridListTile key={node.id}>
-                                    <Card>
+                                    <Card style={{padding:5}}>
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
                                                 {node.title} 
