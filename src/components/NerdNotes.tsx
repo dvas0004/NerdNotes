@@ -3,7 +3,8 @@ import { Query } from 'react-apollo';
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
 import CodeIcon from '@material-ui/icons/Link';
-import { GridList, GridListTile, Typography, Card, CardContent, CardActions, Badge, Button } from '@material-ui/core';
+import ReactMarkdown from 'react-markdown';
+import { Grid, Typography, Card, CardContent, CardActions, Badge, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
 interface props {
@@ -17,8 +18,8 @@ const NerdNotes = (props: props) => {
             ({loading, error, data})=>{
                 console.log(data)
                 if (data.repository){
-                    return <GridList>
-                        <GridListTile key={props.label} cols={2} style={{height: "auto"}}>
+                    return <Grid container>
+                        <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
                             <Card>
                                 <CardContent>
                                     <Typography variant="h4">
@@ -26,17 +27,17 @@ const NerdNotes = (props: props) => {
                                 </Typography>                            
                                 </CardContent>
                             </Card>                            
-                        </GridListTile>
+                        </Grid>
                         {
                             data.repository.issues.nodes.map( (node: any) => 
-                                <GridListTile key={node.id}>
-                                    <Card style={{padding:5}}>
+                                <Grid xs={6} key={node.id}>
+                                    <Card style={{margin: 5}}>
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
                                                 {node.title} 
                                             </Typography>
                                             <Typography variant="body1">
-                                                {node.body} 
+                                                <ReactMarkdown source={node.body} /> 
                                             </Typography>
                                         </CardContent>
                                         <CardActions>
@@ -57,17 +58,17 @@ const NerdNotes = (props: props) => {
                                             </div>                                            
                                         </CardActions>
                                     </Card>
-                                </GridListTile> 
+                                </Grid> 
                             )
                         }
-                        <GridListTile key={props.label} cols={2} style={{height: "auto"}}>
+                        <Grid key={props.label} xs={2} style={{height: "auto"}}>
                             <Button variant="contained" color="primary">
                                 <Link to="/" style={{textDecoration: "none", color: "white"}}>
                                     {`<< Back`}
                                 </Link>
                             </Button>
-                        </GridListTile>
-                        </GridList>
+                        </Grid>
+                    </Grid>
                 } else {
                     return <div>No Information Available</div>
                 }                
