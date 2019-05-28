@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import {Query} from 'react-apollo'
 import GetAllLabels from '../gql/GetAllLabels';
+import HelpIcon from '@material-ui/icons/HelpOutline';
 import { GridList, GridListTile, Card, CardContent, Typography, Container } from '@material-ui/core';
 import { Link } from "react-router-dom";
 
@@ -15,8 +16,16 @@ const NerdNotesLabels = () => {
                                     <Card>
                                         <CardContent>
                                             <Typography variant="h4">
-                                                Nerd Notes Labels
+                                                Nerd Notes
+                                                <HelpIcon
+                                                    style={{
+                                                        marginLeft: 20,
+                                                        cursor: "pointer"
+                                                    }} 
+                                                    onClick={()=>window.location.assign('https://github.com/dvas0004/NerdNotes/blob/master/README.md')}
+                                                />
                                             </Typography>
+                                            
                                         </CardContent>                                        
                                     </Card>
                                 </GridListTile>
