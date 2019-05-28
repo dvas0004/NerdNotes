@@ -11,6 +11,9 @@ const GetNotesByLabel = (args: funcArgs) => {
             repository(owner: "dvas0004", name: "NerdNotes"){
                 issues(first: 100, labels: [${args.label}]){
                 nodes{
+                    id
+                    resourcePath
+                    title
                     body
                     labels(first: 100){
                         nodes{

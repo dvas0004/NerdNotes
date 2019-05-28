@@ -1,13 +1,13 @@
 import React from 'react'
-import {Grid} from '@material-ui/core'
+import Container from '@material-ui/core/Container'
 import MainContent from './components/MainContent'
 
 const App: React.FC = () => {
   return (
     <div className="App">
-      <Grid container style={{padding: 20}}>
+      <Container maxWidth="xl">
         <MainContent />
-      </Grid>
+      </Container>
     </div>
   );
 }
