@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import {Query} from 'react-apollo'
 import GetAllLabels from '../gql/GetAllLabels';
 import HelpIcon from '@material-ui/icons/HelpOutline';
@@ -30,7 +30,7 @@ const NerdNotesLabels = () => {
                                     </Card>
                                 </Grid>
                                 {data['repository']['labels']['nodes'].map(
-                                    (label:any) =>  <Grid xs={12} md={6} key={label.name}>
+                                    (label:any) =>  <Grid item xs={12} md={6} key={label.name}>
                                                         <Card style={{margin: 5}}>
                                                             <CardContent>
                                                                 <Container>
