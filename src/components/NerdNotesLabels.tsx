@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import {Query} from 'react-apollo'
 import GetAllLabels from '../gql/GetAllLabels';
 import HelpIcon from '@material-ui/icons/HelpOutline';
-import { GridList, GridListTile, Card, CardContent, Typography, Container } from '@material-ui/core';
+import { Grid,Card, CardContent, Typography, Container } from '@material-ui/core';
 import { Link } from "react-router-dom";
 
 const NerdNotesLabels = () => {
@@ -11,8 +11,8 @@ const NerdNotesLabels = () => {
         {({ loading, error, data }) => { 
                 console.log(data)
                 if (data.repository){
-                    return <GridList cellHeight={180}>
-                                <GridListTile key="labelsHeading" cols={2} style={{height: "auto"}}>
+                    return <Grid container>
+                                <Grid item key='labelsHeading' xs={12} style={{height: "auto", padding: 10}}>
                                     <Card>
                                         <CardContent>
                                             <Typography variant="h4">
@@ -28,15 +28,10 @@ const NerdNotesLabels = () => {
                                             
                                         </CardContent>                                        
                                     </Card>
-                                </GridListTile>
+                                </Grid>
                                 {data['repository']['labels']['nodes'].map(
-                                    (label:any) =>  <GridListTile key={label.name} 
-                                                        style={{
-                                                            height: "auto",
-                                                            cursor: "pointer"
-                                                        }}
-                                                    >
-                                                        <Card>
+                                    (label:any) =>  <Grid xs={12} md={6} key={label.name}>
+                                                        <Card style={{margin: 5}}>
                                                             <CardContent>
                                                                 <Container>
                                                                     <Link to={label.name}>
@@ -47,9 +42,9 @@ const NerdNotesLabels = () => {
                                                                 </Container>                                                                
                                                             </CardContent>
                                                         </Card>                                                        
-                                                    </GridListTile>
+                                                    </Grid>
                                 )}
-                            </GridList>                         
+                            </Grid>                         
                 } else {
                     return <div>No information available</div>
                 }                    

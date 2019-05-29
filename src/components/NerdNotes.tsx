@@ -30,7 +30,7 @@ const NerdNotes = (props: props) => {
                         </Grid>
                         {
                             data.repository.issues.nodes.map( (node: any) => 
-                                <Grid xs={6} key={node.id}>
+                                <Grid xs={12} md={6} key={node.id}>
                                     <Card style={{margin: 5}}>
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
