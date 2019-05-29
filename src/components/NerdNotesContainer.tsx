@@ -20,7 +20,14 @@ const client = new ApolloClient({
   }
 });
 
-const NerdNotesContainer = async () => {
+const setupCache = async () => {
+  await persistCache({
+    cache,
+    storage: window.localStorage as any, //unfortunate workaround - no types for NormalizedCacheObject and some others
+  });
+}
+
+const NerdNotesContainer = () => {
 
     client.defaultOptions = {
       query: {
@@ -29,10 +36,7 @@ const NerdNotesContainer = async () => {
     };
 
     // await before instantiating ApolloClient, else queries might run before the cache is persisted
-    await persistCache({
-      cache,
-      storage: window.localStorage as any, //unfortunate workaround - no types for NormalizedCacheObject and some others
-    });
+    setupCache()
 
     return <ApolloProvider client={client}>
             <Route exact path="/" component={ () => <NerdNotesLabels /> } />
