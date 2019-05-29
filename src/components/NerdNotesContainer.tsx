@@ -12,13 +12,6 @@ const RO_TOKEN = "a65de533600259fae0e90a2a4630dd55be67e96b"
 
 const cache = new InMemoryCache();
 
-// await before instantiating ApolloClient, else queries might run before the cache is persisted
-persistCache({
-  cache,
-  storage: window.localStorage as any, //unfortunate workaround - no types for NormalizedCacheObject and some others
-});
-
-
 const client = new ApolloClient({
   uri: "https://api.github.com/graphql",
   cache: cache,
@@ -27,7 +20,19 @@ const client = new ApolloClient({
   }
 });
 
-const NerdNotesContainer = () => {
+const NerdNotesContainer = async () => {
+
+    client.defaultOptions = {
+      query: {
+        fetchPolicy: 'cache-and-network'
+      }
+    };
+
+    // await before instantiating ApolloClient, else queries might run before the cache is persisted
+    await persistCache({
+      cache,
+      storage: window.localStorage as any, //unfortunate workaround - no types for NormalizedCacheObject and some others
+    });
 
     return <ApolloProvider client={client}>
             <Route exact path="/" component={ () => <NerdNotesLabels /> } />

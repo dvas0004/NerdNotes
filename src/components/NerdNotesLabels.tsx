@@ -46,7 +46,7 @@ const NerdNotesLabels = () => {
                                 )}
                             </Grid>                         
                 } else {
-                    return <div>No information available</div>
+                    return <div>Loading...</div>
                 }                    
             }
         }

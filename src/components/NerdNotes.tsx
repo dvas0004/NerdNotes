@@ -70,7 +70,7 @@ const NerdNotes = (props: props) => {
                         </Grid>
                     </Grid>
                 } else {
-                    return <div>No Information Available</div>
+                    return <div>Loading...</div>
                 }                
             }
         }
