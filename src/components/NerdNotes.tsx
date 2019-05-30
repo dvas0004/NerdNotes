@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Query } from 'react-apollo';
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
@@ -6,12 +6,41 @@ import CodeIcon from '@material-ui/icons/Link';
 import ReactMarkdown from 'react-markdown';
 import { Grid, Typography, Card, CardContent, CardActions, Badge, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import isMobile from '../utils/mobileCheck';
 
 interface props {
     label: string
 }
 
 const NerdNotes = (props: props) => {
+
+
+    const [xStart, setXStart] = useState(0)
+    const swipeThreshold = 100
+
+    const touchStartHandler = (touchStartEvent :any ) => {
+        setXStart(touchStartEvent.touches[0].clientX)
+    }
+    const touchEndHandler = (touchEndEvent :any) => {
+        const xDiff = (touchEndEvent.changedTouches[0].clientX - xStart)
+        if (Math.abs(xDiff) > swipeThreshold) {
+            const target = touchEndEvent.target || touchEndEvent.srcElement;
+            const targetID = target.closest(".MuiGrid-item");
+            targetID.style.display="none";
+        }
+    }
+
+    const mouseDownHandler = (mouseDownEvent :any) => {
+        setXStart(mouseDownEvent.clientX)
+    }
+    const mouseUpHandler = (mouseUpEvent :any) => {
+        const xDiff = (mouseUpEvent.clientX - xStart)
+        if (Math.abs(xDiff) > swipeThreshold) {
+            const target = mouseUpEvent.target || mouseUpEvent.srcElement;
+            const targetID = target.closest(".MuiGrid-item");
+            targetID.style.display="none";
+        }
+    }
 
     return <Query<any> query={GetNotesByLabel({label: props.label})}>
         {
@@ -23,15 +52,22 @@ const NerdNotes = (props: props) => {
                             <Card>
                                 <CardContent>
                                     <Typography variant="h4">
-                                    {props.label}
-                                </Typography>                            
+                                        {props.label}
+                                    </Typography>
+                                    { isMobile() ? 
+                                        <Typography variant="subtitle2">
+                                            HINT: swipe left or right to dismiss cards
+                                        </Typography>
+                                    :
+                                        null
+                                    }
                                 </CardContent>
-                            </Card>                            
+                            </Card>
                         </Grid>
                         {
                             data.repository.issues.nodes.map( (node: any) => 
                                 <Grid item xs={12} md={6} key={node.id}>
-                                    <Card style={{margin: 5}}>
+                                    <Card style={{margin: 5}} onMouseDown={mouseDownHandler} onMouseUp={mouseUpHandler} onTouchStart={touchStartHandler} onTouchEnd={touchEndHandler}>
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
                                                 {node.title} 
