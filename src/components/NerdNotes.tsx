@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import { Grid, Typography, Card, CardContent, CardActions, Badge, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
+import animateCSS from '../utils/animations';
 
 interface props {
     label: string
@@ -26,7 +27,16 @@ const NerdNotes = (props: props) => {
         if (Math.abs(xDiff) > swipeThreshold) {
             const target = touchEndEvent.target || touchEndEvent.srcElement;
             const targetID = target.closest(".MuiGrid-item");
-            targetID.style.display="none";
+            let animation = '';
+            if (xDiff < 0){
+                animation = 'bounceOutLeft'
+            } else {
+                animation = 'bounceOutRight'
+            }
+            animateCSS(targetID, animation, function() {
+                // Do something after animation
+                targetID.style.display="none";
+              })
         }
     }
 
@@ -36,9 +46,19 @@ const NerdNotes = (props: props) => {
     const mouseUpHandler = (mouseUpEvent :any) => {
         const xDiff = (mouseUpEvent.clientX - xStart)
         if (Math.abs(xDiff) > swipeThreshold) {
+            console.log("swipe detected");
             const target = mouseUpEvent.target || mouseUpEvent.srcElement;
             const targetID = target.closest(".MuiGrid-item");
-            targetID.style.display="none";
+            let animation = '';
+            if (xDiff < 0){
+                animation = 'bounceOutLeft'
+            } else {
+                animation = 'bounceOutRight'
+            }
+            animateCSS(targetID, animation, function() {
+                // Do something after animation
+                targetID.style.display="none";
+              })
         }
     }
 
