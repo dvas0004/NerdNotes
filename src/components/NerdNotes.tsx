@@ -8,6 +8,7 @@ import { Grid, Typography, Card, CardContent, CardActions, Badge, Button } from 
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
+import LikeNoteModal from './LikeNoteModal';
 
 interface props {
     label: string
@@ -15,6 +16,17 @@ interface props {
 
 const NerdNotes = (props: props) => {
 
+    const [likeNoteModalOpen, changeLikeNoteModalOpen] = useState(false);
+    const [modalNoteID, changeModalNoteID] = useState("");
+
+    const openLikeNoteModal = (modalNoteID: string) => {
+        changeModalNoteID(modalNoteID);
+        changeLikeNoteModalOpen(true);
+    };
+
+    const closeLikeNoteModal = () => {
+        changeLikeNoteModalOpen(false);
+    }
 
     const [xStart, setXStart] = useState(0)
     const swipeThreshold = 100
@@ -108,7 +120,7 @@ const NerdNotes = (props: props) => {
                                                 </span>
                                                 <span>
                                                     <Badge badgeContent={node.reactions.totalCount} color="secondary">
-                                                        <HeartIcon style={{fontSize: 30}}/>
+                                                        <HeartIcon style={{fontSize: 30}} onClick={() => openLikeNoteModal(node.resourcePath)}/>
                                                     </Badge>
                                                 </span>                                                
                                             </div>                                            
@@ -117,12 +129,13 @@ const NerdNotes = (props: props) => {
                                 </Grid> 
                             )
                         }
-                        <Grid key={props.label} xs={2} style={{height: "auto"}}>
+                        <Grid key={props.label} xs={12} style={{height: "auto"}}>
                             <Button variant="contained" color="primary">
                                 <Link to="/" style={{textDecoration: "none", color: "white"}}>
                                     {`<< Back`}
                                 </Link>
                             </Button>
+                            <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
                         </Grid>
                     </Grid>
                 } else {
