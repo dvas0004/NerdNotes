@@ -32,6 +32,8 @@ Simply create a new "issue" in this repopsitory, and remember to:
 1. Click on the hyperlink icon at the bottom right of the nerd note
 2. In the resulting github page that opens, click on the reaction button (+😃) at the right of the issue title and click on the heart reaction (❤)
 
+![upvoting](https://github.com/dvas0004/NerdNotes/blob/master/public/img/heart_react.gif?raw=true)
+
 ## Tech Used
 
 - Frontend
