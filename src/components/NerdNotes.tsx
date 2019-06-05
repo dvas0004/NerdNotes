@@ -3,8 +3,10 @@ import { Query } from 'react-apollo';
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
 import CodeIcon from '@material-ui/icons/Link';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AllNotesIcon from '@material-ui/icons/Inbox';
 import ReactMarkdown from 'react-markdown';
-import { Grid, Typography, Card, CardContent, CardActions, Badge, Button } from '@material-ui/core';
+import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Fab } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
@@ -14,7 +16,41 @@ interface props {
     label: string
 }
 
+const saveSwiped = (value: Set<String>) => {
+    const swipedArray = Array.from(value);
+    localStorage.setItem('swiped', JSON.stringify(swipedArray));
+}
+
+const saveShowSwiped = (value: Boolean) => {
+    localStorage.setItem('showSwiped', JSON.stringify(value));
+}
+
+const getShowSwiped = () => {
+    
+    const prevSetting = localStorage.getItem('showSwiped');
+    if (prevSetting != null){
+        return JSON.parse( prevSetting )
+    } 
+    
+}
+
 const NerdNotes = (props: props) => {
+
+    let swiped : Set<String> = new Set([]);
+    if (localStorage.getItem('swiped') != null){
+        const previouslySwiped = localStorage.getItem('swiped') as string;
+        swiped = new Set(JSON.parse(previouslySwiped));
+    }
+
+    const [swipedNotes, changeSwipedNotes] = useState(swiped);
+    const [showSwipedNotes, changeShowSwipedNotes] = useState(getShowSwiped());
+    const toggleShowSwipedNotes = () => {
+        saveShowSwiped(!showSwipedNotes);
+        changeShowSwipedNotes(!showSwipedNotes);
+    };
+
+    const [showFABOptions, changeShowFABOptions] = useState(false);
+    const toggleShowFABOptions = () => changeShowFABOptions(!showFABOptions);
 
     const [likeNoteModalOpen, changeLikeNoteModalOpen] = useState(false);
     const [modalNoteID, changeModalNoteID] = useState("");
@@ -46,8 +82,11 @@ const NerdNotes = (props: props) => {
                 animation = 'bounceOutRight'
             }
             animateCSS(targetID, animation, function() {
-                // Do something after animation
+                // Do after animation
                 targetID.style.display="none";
+                swipedNotes.add(targetID.id);
+                changeSwipedNotes(swipedNotes);
+                saveSwiped(swipedNotes)
               })
         }
     }
@@ -68,8 +107,11 @@ const NerdNotes = (props: props) => {
                 animation = 'bounceOutRight'
             }
             animateCSS(targetID, animation, function() {
-                // Do something after animation
+                // Do after animation
                 targetID.style.display="none";
+                swipedNotes.add(targetID.id);
+                changeSwipedNotes(swipedNotes);
+                saveSwiped(swipedNotes)
               })
         }
     }
@@ -97,9 +139,17 @@ const NerdNotes = (props: props) => {
                             </Card>
                         </Grid>
                         {
-                            data.repository.issues.nodes.map( (node: any) => 
-                                <Grid item xs={12} md={6} key={node.id}>
-                                    <Card style={{margin: 5}} onMouseDown={mouseDownHandler} onMouseUp={mouseUpHandler} onTouchStart={touchStartHandler} onTouchEnd={touchEndHandler}>
+                            data.repository.issues.nodes.filter( (node: any) => showSwipedNotes ? true : !( swipedNotes.has(node.id) ) ).map( (node: any) => 
+                                <Grid item xs={12} md={6} key={node.id} id={node.id}>
+                                    <Card   style={{
+                                                margin: 5,
+                                                overflowX: "auto"
+                                            }} 
+                                            onMouseDown={mouseDownHandler} 
+                                            onMouseUp={mouseUpHandler} 
+                                            onTouchStart={touchStartHandler} 
+                                            onTouchEnd={touchEndHandler}
+                                    >
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
                                                 {node.title} 
@@ -129,13 +179,31 @@ const NerdNotes = (props: props) => {
                                 </Grid> 
                             )
                         }
-                        <Grid key={props.label} xs={12} style={{height: "auto"}}>
+                        <Grid item key={props.label} xs={12} style={{height: "auto"}}>
                             <Button variant="contained" color="primary">
                                 <Link to="/" style={{textDecoration: "none", color: "white"}}>
                                     {`<< Back`}
                                 </Link>
                             </Button>
                             <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
+                            <Fab color="primary" onClick={toggleShowFABOptions} style={{
+                                position: "fixed",
+                                bottom: 20,
+                                right: 20
+                            }}>
+                                <SettingsIcon />
+                            </Fab>
+                            { showFABOptions ? 
+                                <Fab variant="extended" color="primary" size="small" onClick={toggleShowSwipedNotes} style={{
+                                    position: "fixed",
+                                    bottom: 86,
+                                    right: 20
+                                }}>
+                                    <AllNotesIcon style={{marginRight: 5}} />
+                                    Toggle swiped notes
+                                </Fab>
+                                : null 
+                            }
                         </Grid>
                     </Grid>
                 } else {
