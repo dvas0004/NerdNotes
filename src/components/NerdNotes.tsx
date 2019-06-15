@@ -36,6 +36,8 @@ const getShowSwiped = () => {
 
 const NerdNotes = (props: props) => {
 
+    const [afterCursor, changeAfterCursor] = useState(undefined);
+
     let swiped : Set<String> = new Set([]);
     if (localStorage.getItem('swiped') != null){
         const previouslySwiped = localStorage.getItem('swiped') as string;
@@ -116,7 +118,7 @@ const NerdNotes = (props: props) => {
         }
     }
 
-    return <Query<any> query={GetNotesByLabel({label: props.label})}>
+    return <Query<any> query={GetNotesByLabel({label: props.label, after: afterCursor})}>
         {
             ({loading, error, data})=>{
                 console.log(data)
@@ -185,6 +187,12 @@ const NerdNotes = (props: props) => {
                                     {`<< Back`}
                                 </Link>
                             </Button>
+                            {data.repository.issues.pageInfo.hasNextPage ? <Button variant="contained" 
+                                color="primary" 
+                                style={{marginLeft: 5}}
+                                onClick={()=> changeAfterCursor(data.repository.issues.pageInfo.endCursor)}>
+                                    {`Next >>`}
+                            </Button>: null}
                             <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
                             <Fab color="primary" onClick={toggleShowFABOptions} style={{
                                 position: "fixed",
