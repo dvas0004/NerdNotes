@@ -9,7 +9,10 @@ const GetNotesByLabel = (args: funcArgs) => {
     return gql`
         query {
             repository(owner: "dvas0004", name: "NerdNotes"){
-                issues(first: 100, labels: [${args.label}]){
+                issues(first: 100, labels: [${args.label}], orderBy:{
+                    field: UPDATED_AT,
+                    direction: DESC
+                  }){
                 nodes{
                     id
                     resourcePath
