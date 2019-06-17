@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
 import LikeNoteModal from './LikeNoteModal';
+import { cursorTo } from 'readline';
 
 interface props {
     label: string
@@ -47,7 +48,10 @@ const isScrollable: Function = (target: string) => {
 
 const NerdNotes = (props: props) => {
 
-    const [afterCursor, changeAfterCursor] = useState(undefined);
+    const [cursor, changeCursor] = useState({
+        start: undefined,
+        after: undefined
+    });
 
     let swiped : Set<String> = new Set([]);
     if (localStorage.getItem('swiped') != null){
@@ -129,7 +133,7 @@ const NerdNotes = (props: props) => {
         }
     }
 
-    return <Query<any> query={GetNotesByLabel({label: props.label, after: afterCursor})}>
+    return <Query<any> query={GetNotesByLabel({label: props.label, after: cursor.after})}>
         {
             ({loading, error, data})=>{
                 console.log(data)
@@ -195,13 +199,34 @@ const NerdNotes = (props: props) => {
                         <Grid item key={props.label} xs={12} style={{height: "auto"}}>
                             <Button variant="contained" color="primary">
                                 <Link to="/" style={{textDecoration: "none", color: "white"}}>
-                                    {`<< Back`}
+                                    Home
                                 </Link>
                             </Button>
+                        
+                            {cursor.after ? 
+                                <Button variant="contained" 
+                                    color="primary" 
+                                    style={{marginLeft: 5}}
+                                    onClick={()=>changeCursor({
+                                            start: undefined,
+                                            after: cursor.start
+                                    })}>
+                                    {`<< Back`}
+                                </Button>
+                            :
+                                null
+                            }
+                            
+                            
                             {data.repository.issues.pageInfo.hasNextPage ? <Button variant="contained" 
                                 color="primary" 
                                 style={{marginLeft: 5}}
-                                onClick={()=> changeAfterCursor(data.repository.issues.pageInfo.endCursor)}>
+                                onClick={()=> {
+                                    changeCursor({
+                                        start: cursor.after,
+                                        after: data.repository.issues.pageInfo.endCursor
+                                    });
+                                }}>
                                     {`Next >>`}
                             </Button>: null}
                             <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
