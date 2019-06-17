@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { Query } from 'react-apollo';
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
@@ -11,7 +11,8 @@ import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
 import LikeNoteModal from './LikeNoteModal';
-import { cursorTo } from 'readline';
+//@ts-ignore
+import hljs from 'highlightjs';
 
 interface props {
     label: string
@@ -136,8 +137,9 @@ const NerdNotes = (props: props) => {
     return <Query<any> query={GetNotesByLabel({label: props.label, after: cursor.after})}>
         {
             ({loading, error, data})=>{
-                console.log(data)
+                                
                 if (data.repository){
+                    setTimeout(()=>hljs.initHighlighting(), 10);
                     return <Grid container>
                         <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
                             <Card>
