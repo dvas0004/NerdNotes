@@ -34,6 +34,17 @@ const getShowSwiped = () => {
     
 }
 
+const isScrollable: Function = (target: string) => {
+    const clientWidth: Number = document.getElementById(target)!.querySelector(".MuiPaper-root")!.clientWidth;
+    const scrollWidth: Number = document.getElementById(target)!.querySelector(".MuiPaper-root")!.scrollWidth;
+
+    if (scrollWidth > clientWidth){
+        return true;
+    }
+
+    return false;
+}
+
 const NerdNotes = (props: props) => {
 
     let swiped : Set<String> = new Set([]);
@@ -147,8 +158,8 @@ const NerdNotes = (props: props) => {
                                             }} 
                                             onMouseDown={mouseDownHandler} 
                                             onMouseUp={mouseUpHandler} 
-                                            onTouchStart={touchStartHandler} 
-                                            onTouchEnd={touchEndHandler}
+                                            onTouchStart={(e) => isScrollable(node.id) ? null : touchStartHandler(e)} 
+                                            onTouchEnd={(e) => isScrollable(node.id) ? null : touchEndHandler(e)}
                                     >
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
