@@ -44,6 +44,19 @@ const NerdNotesLabels = () => {
                                                         </Card>                                                        
                                                     </Grid>
                                 )}
+                                <Grid item xs={12} md={6} key="all_notes">
+                                    <Card style={{margin: 5}}>
+                                        <CardContent>
+                                            <Container>
+                                                <Link to="all_notes">
+                                                    <Typography variant="overline">
+                                                        {`All Notes >>`}
+                                                    </Typography>
+                                                </Link>
+                                            </Container>                                                                
+                                        </CardContent>
+                                    </Card>                                                        
+                                </Grid>
                             </Grid>                         
                 } else {
                     return <div>Loading...</div>
