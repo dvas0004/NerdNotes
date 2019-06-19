@@ -6,7 +6,7 @@ import CodeIcon from '@material-ui/icons/Link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import AllNotesIcon from '@material-ui/icons/Inbox';
 import ReactMarkdown from 'react-markdown';
-import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Fab } from '@material-ui/core';
+import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Fab, Chip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
@@ -139,7 +139,10 @@ const NerdNotes = (props: props) => {
             ({loading, error, data})=>{
                                 
                 if (data.repository){
-                    setTimeout(()=>hljs.initHighlighting(), 10);
+                    setTimeout(()=>hljs.initHighlighting(), 10); 
+                    // the above timeout is there becuase hljs needs to be run AFTER the below 
+                    // return so that JSX is compiled down to plain JS, which in turn is consumed by hljs
+                    
                     return <Grid container>
                         <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
                             <Card>
@@ -166,8 +169,10 @@ const NerdNotes = (props: props) => {
                                             }} 
                                             onMouseDown={mouseDownHandler} 
                                             onMouseUp={mouseUpHandler} 
-                                            onTouchStart={(e) => isScrollable(node.id) ? null : touchStartHandler(e)} 
-                                            onTouchEnd={(e) => isScrollable(node.id) ? null : touchEndHandler(e)}
+                                            // onTouchStart={(e) => isScrollable(node.id) ? null : touchStartHandler(e)} 
+                                            // onTouchEnd={(e) => isScrollable(node.id) ? null : touchEndHandler(e)}
+                                            onTouchStart={(e) => touchStartHandler(e)} 
+                                            onTouchEnd={(e) => touchEndHandler(e)}
                                     >
                                     <CardContent>
                                             <Typography variant="overline" style={{fontSize: 20}}>
@@ -179,6 +184,13 @@ const NerdNotes = (props: props) => {
                                         </CardContent>
                                         <CardActions>
                                             <div style={{marginLeft:"auto", marginRight: 20}}>
+                                                <span>
+                                                    <Chip
+                                                        // avatar={<Avatar>MB</Avatar>}
+                                                        label={props.label}
+                                                        style={{margin: 1}}
+                                                    />
+                                                </span>
                                                 <span>
                                                     <Badge>
                                                         <CodeIcon style={{
