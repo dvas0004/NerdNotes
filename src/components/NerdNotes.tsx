@@ -139,7 +139,7 @@ const NerdNotes = (props: props) => {
             ({loading, error, data})=>{
                                 
                 if (data.repository){
-                    setTimeout(()=>hljs.initHighlighting(), 10); 
+                    setTimeout(()=>hljs.initHighlighting(), 1000); 
                     // the above timeout is there becuase hljs needs to be run AFTER the below 
                     // return so that JSX is compiled down to plain JS, which in turn is consumed by hljs
                     
