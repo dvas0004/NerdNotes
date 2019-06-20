@@ -185,11 +185,13 @@ const NerdNotes = (props: props) => {
                                         <CardActions>
                                             <div style={{marginLeft:"auto", marginRight: 20}}>
                                                 <span>
-                                                    <Chip
-                                                        // avatar={<Avatar>MB</Avatar>}
-                                                        label={props.label}
-                                                        style={{margin: 1}}
-                                                    />
+                                                    { node.labels.nodes.map ((label :any) => 
+                                                        <Chip
+                                                            // avatar={<Avatar>MB</Avatar>}
+                                                            label={label.name}
+                                                            style={{margin: 1}}
+                                                        />
+                                                    )}                                                    
                                                 </span>
                                                 <span>
                                                     <Badge>

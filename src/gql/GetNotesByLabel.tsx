@@ -26,7 +26,7 @@ const GetNotesByLabel = (args: funcArgs) => {
                         resourcePath
                         title
                         body
-                        labels(first: 100){
+                        labels(first: 5){
                             nodes{
                                 name
                             }
