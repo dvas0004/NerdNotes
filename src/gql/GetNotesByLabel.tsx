@@ -14,7 +14,7 @@ const GetNotesByLabel = (args: funcArgs) => {
                     ${args.label == "all_notes" ? "" : `labels: [${args.label}],`} 
                     ${args.after? `after: "${args.after}"` : ""}
                     orderBy:{
-                        field: UPDATED_AT,
+                        field: CREATED_AT,
                         direction: DESC
                     },
                     filterBy:{
