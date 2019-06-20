@@ -29,6 +29,19 @@ const NerdNotesLabels = () => {
                                         </CardContent>                                        
                                     </Card>
                                 </Grid>
+                                <Grid item xs={12} md={6} key="all_notes">
+                                    <Card style={{margin: 5}}>
+                                        <CardContent>
+                                            <Container>
+                                                <Link to="all_notes">
+                                                    <Typography variant="overline">
+                                                        {`All Notes >>`}
+                                                    </Typography>
+                                                </Link>
+                                            </Container>                                                                
+                                        </CardContent>
+                                    </Card>                                                        
+                                </Grid>
                                 {data['repository']['labels']['nodes'].map(
                                     (label:any) =>  <Grid item xs={12} md={6} key={label.name}>
                                                         <Card style={{margin: 5}}>
@@ -44,19 +57,6 @@ const NerdNotesLabels = () => {
                                                         </Card>                                                        
                                                     </Grid>
                                 )}
-                                <Grid item xs={12} md={6} key="all_notes">
-                                    <Card style={{margin: 5}}>
-                                        <CardContent>
-                                            <Container>
-                                                <Link to="all_notes">
-                                                    <Typography variant="overline">
-                                                        {`All Notes >>`}
-                                                    </Typography>
-                                                </Link>
-                                            </Container>                                                                
-                                        </CardContent>
-                                    </Card>                                                        
-                                </Grid>
                             </Grid>                         
                 } else {
                     return <div>Loading...</div>
