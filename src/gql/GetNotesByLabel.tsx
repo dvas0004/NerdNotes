@@ -16,7 +16,11 @@ const GetNotesByLabel = (args: funcArgs) => {
                     orderBy:{
                         field: UPDATED_AT,
                         direction: DESC
-                  }){
+                    },
+                    filterBy:{
+                        assignee: "dvas0004"
+                    }
+                ){
                     pageInfo{
                         endCursor,
                         hasNextPage
