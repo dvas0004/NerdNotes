@@ -1,4 +1,6 @@
-# Nerd Notes
+# [Nerd Notes](https://nerdnotes.davidvassallo.me)
+
+[https://nerdnotes.davidvassallo.me](https://nerdnotes.davidvassallo.me)
 
 A collection of notes: things I'd like to remember while reading technical articles, technical questions I couldn't answer, and so on.
 
