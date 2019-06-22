@@ -2,3 +2,7 @@ body {
   background-color: #282c34;
   color: whitesmoke
 }
+
+.App img {
+  width: 95%;
+}
