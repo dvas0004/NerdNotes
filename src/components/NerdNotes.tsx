@@ -1,18 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Fragment} from 'react'
 import { Query } from 'react-apollo';
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
 import CodeIcon from '@material-ui/icons/Link';
-import SettingsIcon from '@material-ui/icons/Settings';
-import AllNotesIcon from '@material-ui/icons/Inbox';
 import ReactMarkdown from 'react-markdown';
-import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Fab, Chip } from '@material-ui/core';
+import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Chip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
 import LikeNoteModal from './LikeNoteModal';
 //@ts-ignore
 import hljs from 'highlightjs';
+import NerdNotesFab from './NerdNotesFab';
 
 interface props {
     label: string
@@ -66,9 +65,7 @@ const NerdNotes = (props: props) => {
         saveShowSwiped(!showSwipedNotes);
         changeShowSwipedNotes(!showSwipedNotes);
     };
-
-    const [showFABOptions, changeShowFABOptions] = useState(false);
-    const toggleShowFABOptions = () => changeShowFABOptions(!showFABOptions);
+       
 
     const [likeNoteModalOpen, changeLikeNoteModalOpen] = useState(false);
     const [modalNoteID, changeModalNoteID] = useState("");
@@ -246,24 +243,7 @@ const NerdNotes = (props: props) => {
                                     {`Next >>`}
                             </Button>: null}
                             <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
-                            <Fab color="primary" onClick={toggleShowFABOptions} style={{
-                                position: "fixed",
-                                bottom: 20,
-                                right: 20
-                            }}>
-                                <SettingsIcon />
-                            </Fab>
-                            { showFABOptions ? 
-                                <Fab variant="extended" color="primary" size="small" onClick={toggleShowSwipedNotes} style={{
-                                    position: "fixed",
-                                    bottom: 86,
-                                    right: 20
-                                }}>
-                                    <AllNotesIcon style={{marginRight: 5}} />
-                                    Toggle swiped notes
-                                </Fab>
-                                : null 
-                            }
+                            <NerdNotesFab toggleShowSwipedNotes={toggleShowSwipedNotes} type="github" />
                         </Grid>
                     </Grid>
                 } else {
