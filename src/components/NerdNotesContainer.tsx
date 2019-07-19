@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ApolloClient from "apollo-boost"
 import { InMemoryCache } from 'apollo-cache-inmemory';
-import { ApolloProvider } from "react-apollo";
+import { ApolloProvider } from "@apollo/react-hooks";
 import NerdNotesLabels from './NerdNotesLabels';
 import NerdNotes from './NerdNotes';
 import { Route } from 'react-router';

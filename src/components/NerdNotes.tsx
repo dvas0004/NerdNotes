@@ -6,6 +6,7 @@ import CodeIcon from '@material-ui/icons/Link';
 import ReactMarkdown from 'react-markdown';
 import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Chip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
 import LikeNoteModal from './LikeNoteModal';
@@ -131,127 +132,136 @@ const NerdNotes = (props: props) => {
         }
     }
 
-    return <Query<any> query={GetNotesByLabel({label: props.label, after: cursor.after})}>
-        {
-            ({loading, error, data})=>{
-                                
-                if (data.repository){
-                    setTimeout(()=>hljs.initHighlighting(), 1000); 
-                    // the above timeout is there becuase hljs needs to be run AFTER the below 
-                    // return so that JSX is compiled down to plain JS, which in turn is consumed by hljs
+    const { data } = useQuery(GetNotesByLabel({label: props.label, after: cursor.after}));
+    let view = <div />;
+
+    if (data.repository){
                     
-                    return <Grid container>
-                        <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
-                            <Card>
-                                <CardContent>
-                                    <Typography variant="h4">
-                                        {props.label}
-                                    </Typography>
-                                    { isMobile() ? 
-                                        <Typography variant="subtitle2">
-                                            HINT: swipe left or right to dismiss cards
-                                        </Typography>
-                                    :
-                                        null
-                                    }
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                        {
-                            data.repository.issues.nodes.filter( (node: any) => showSwipedNotes ? true : !( swipedNotes.has(node.id) ) ).map( (node: any) => 
-                                <Grid item xs={12} md={6} key={node.id} id={node.id}>
-                                    <Card   style={{
-                                                margin: 5,
-                                                overflowX: "auto"
-                                            }} 
-                                            onMouseDown={mouseDownHandler} 
-                                            onMouseUp={mouseUpHandler} 
-                                            // onTouchStart={(e) => isScrollable(node.id) ? null : touchStartHandler(e)} 
-                                            // onTouchEnd={(e) => isScrollable(node.id) ? null : touchEndHandler(e)}
-                                            onTouchStart={(e) => touchStartHandler(e)} 
-                                            onTouchEnd={(e) => touchEndHandler(e)}
-                                    >
-                                    <CardContent>
-                                            <Typography variant="overline" style={{fontSize: 20}}>
-                                                {node.title} 
-                                            </Typography>
-                                            <Typography variant="body1">
-                                                <ReactMarkdown source={node.body} /> 
-                                            </Typography>
-                                        </CardContent>
-                                        <CardActions>
-                                            <div style={{marginLeft:"auto", marginRight: 20}}>
-                                                <span>
-                                                    { node.labels.nodes.map ((label :any) => 
-                                                        <Chip
-                                                            // avatar={<Avatar>MB</Avatar>}
-                                                            label={label.name}
-                                                            style={{margin: 1}}
-                                                        />
-                                                    )}                                                    
-                                                </span>
-                                                <span>
-                                                    <Badge>
-                                                        <CodeIcon style={{
-                                                            cursor: "pointer",
-                                                            fontSize: 30
-                                                        }} onClick={()=>window.location.assign(`https://github.com/${node.resourcePath}`)}/>
-                                                    </Badge>
-                                                </span>
-                                                <span>
-                                                    <Badge badgeContent={node.reactions.totalCount} color="secondary">
-                                                        <HeartIcon style={{fontSize: 30}} onClick={() => openLikeNoteModal(node.resourcePath)}/>
-                                                    </Badge>
-                                                </span>                                                
-                                            </div>                                            
-                                        </CardActions>
-                                    </Card>
-                                </Grid> 
-                            )
+        view = <Grid container>
+            <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
+                <Card>
+                    <CardContent>
+                        <Typography variant="h4">
+                            {props.label}
+                        </Typography>
+                        { isMobile() ? 
+                            <Typography variant="subtitle2">
+                                HINT: swipe left or right to dismiss cards
+                            </Typography>
+                        :
+                            null
                         }
-                        <Grid item key={props.label} xs={12} style={{height: "auto"}}>
-                            <Button variant="contained" color="primary">
-                                <Link to="/" style={{textDecoration: "none", color: "white"}}>
-                                    Home
-                                </Link>
-                            </Button>
-                        
-                            {cursor.after ? 
-                                <Button variant="contained" 
-                                    color="primary" 
-                                    style={{marginLeft: 5}}
-                                    onClick={()=>changeCursor({
-                                            start: undefined,
-                                            after: cursor.start
-                                    })}>
-                                    {`<< Back`}
-                                </Button>
-                            :
-                                null
-                            }
-                            
-                            
-                            {data.repository.issues.pageInfo.hasNextPage ? <Button variant="contained" 
-                                color="primary" 
-                                style={{marginLeft: 5}}
-                                onClick={()=> {
-                                    changeCursor({
-                                        start: cursor.after,
-                                        after: data.repository.issues.pageInfo.endCursor
-                                    });
-                                }}>
-                                    {`Next >>`}
-                            </Button>: null}
-                            <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
-                            <NerdNotesFab toggleShowSwipedNotes={toggleShowSwipedNotes} type="github" />
-                        </Grid>
-                    </Grid>
-                } else {
-                    return <div>Loading...</div>
-                }                
+                    </CardContent>
+                </Card>
+            </Grid>
+            {
+                data.repository.issues.nodes.filter( (node: any) => showSwipedNotes ? true : !( swipedNotes.has(node.id) ) ).map( (node: any) => 
+                    <Grid item xs={12} md={12} key={node.id} id={node.id}>
+                        <Card   style={{
+                                    margin: 5,
+                                    overflowX: "auto"
+                                }} 
+                                onMouseDown={mouseDownHandler} 
+                                onMouseUp={mouseUpHandler} 
+                                // onTouchStart={(e) => isScrollable(node.id) ? null : touchStartHandler(e)} 
+                                // onTouchEnd={(e) => isScrollable(node.id) ? null : touchEndHandler(e)}
+                                onTouchStart={(e) => touchStartHandler(e)} 
+                                onTouchEnd={(e) => touchEndHandler(e)}
+                        >
+                        <CardContent>
+                                <Typography variant="overline" style={{fontSize: 20}}>
+                                    {node.title} 
+                                </Typography>
+                                <Typography variant="body1">
+                                    <ReactMarkdown source={node.body} /> 
+                                </Typography>
+                            </CardContent>
+                            <CardActions>
+                                <div style={{marginLeft:"auto", marginRight: 20}}>
+                                    <span>
+                                        { node.labels.nodes.map ((label :any) => 
+                                            <Chip
+                                                // avatar={<Avatar>MB</Avatar>}
+                                                label={label.name}
+                                                style={{margin: 1}}
+                                            />
+                                        )}                                                    
+                                    </span>
+                                    <span>
+                                        <Badge>
+                                            <CodeIcon style={{
+                                                cursor: "pointer",
+                                                fontSize: 30
+                                            }} onClick={()=>window.location.assign(`https://github.com/${node.resourcePath}`)}/>
+                                        </Badge>
+                                    </span>
+                                    <span>
+                                        <Badge badgeContent={node.reactions.totalCount} color="secondary">
+                                            <HeartIcon style={{fontSize: 30}} onClick={() => openLikeNoteModal(node.resourcePath)}/>
+                                        </Badge>
+                                    </span>                                                
+                                </div>                                            
+                            </CardActions>
+                        </Card>
+                    </Grid> 
+                )
             }
+            <Grid item key={props.label} xs={12} style={{height: "auto"}}>
+                <Button variant="contained" color="primary">
+                    <Link to="/" style={{textDecoration: "none", color: "white"}}>
+                        Home
+                    </Link>
+                </Button>
+            
+                {cursor.after ? 
+                    <Button variant="contained" 
+                        color="primary" 
+                        style={{marginLeft: 5}}
+                        onClick={()=>changeCursor({
+                                start: undefined,
+                                after: cursor.start
+                        })}>
+                        {`<< Back`}
+                    </Button>
+                :
+                    null
+                }
+                
+                
+                {data.repository.issues.pageInfo.hasNextPage ? <Button variant="contained" 
+                    color="primary" 
+                    style={{marginLeft: 5}}
+                    onClick={()=> {
+                        changeCursor({
+                            start: cursor.after,
+                            after: data.repository.issues.pageInfo.endCursor
+                        });
+                    }}>
+                        {`Next >>`}
+                </Button>: null}
+                <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
+                <NerdNotesFab toggleShowSwipedNotes={toggleShowSwipedNotes} type="github" />
+            </Grid>
+        </Grid>
+    } else {
+        view = <div>Loading...</div>
+    }   
+
+
+    useEffect(()=>{
+        
+        console.log("hljs fired");
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightBlock(block);
+            });
+        window.scrollTo(0, 0);
+    });
+
+    return <Fragment>
+        {
+            view
         }
-    </Query>
+    </Fragment>
 
 }
 
