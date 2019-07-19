@@ -255,7 +255,7 @@ const NerdNotes = (props: props) => {
             hljs.highlightBlock(block);
             });
         window.scrollTo(0, 0);
-    });
+    }, [props.label, cursor.after]);
 
     return <Fragment>
         {
