@@ -1,5 +1,4 @@
-import React, {useState, Fragment, useLayoutEffect} from 'react'
-import { Query } from 'react-apollo';
+import React, {useState, Fragment, useLayoutEffect, useEffect} from 'react'
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
 import CodeIcon from '@material-ui/icons/Link';
@@ -248,12 +247,13 @@ const NerdNotes = (props: props) => {
     }   
 
 
-    useLayoutEffect(()=>{
-        
-        console.log("hljs fired");
-        document.querySelectorAll('pre code').forEach((block) => {
-            hljs.highlightBlock(block);
-            });
+    useEffect(()=>{
+        setTimeout(()=>{
+            console.log("hljs fired");
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightBlock(block);
+                });
+        }, 1000)
         window.scrollTo(0, 0);
     }, [props.label, cursor.after]);
 
