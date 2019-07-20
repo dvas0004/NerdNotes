@@ -1,4 +1,4 @@
-import React, {useState, useEffect, Fragment} from 'react'
+import React, {useState, Fragment, useLayoutEffect} from 'react'
 import { Query } from 'react-apollo';
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
@@ -248,7 +248,7 @@ const NerdNotes = (props: props) => {
     }   
 
 
-    useEffect(()=>{
+    useLayoutEffect(()=>{
         
         console.log("hljs fired");
         document.querySelectorAll('pre code').forEach((block) => {
