@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useLayoutEffect, useEffect} from 'react'
+import React, {useState, Fragment, useLayoutEffect, useEffect, useRef} from 'react'
 import GetNotesByLabel from '../gql/GetNotesByLabel';
 import HeartIcon from '@material-ui/icons/FavoriteBorder';
 import CodeIcon from '@material-ui/icons/Link';
@@ -134,9 +134,11 @@ const NerdNotes = (props: props) => {
     const { data } = useQuery(GetNotesByLabel({label: props.label, after: cursor.after}));
     let view = <div />;
 
+    const viewRef = useRef(null);
+
     if (data.repository){
                     
-        view = <Grid container>
+        view = <Grid container ref={viewRef}>
             <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
                 <Card>
                     <CardContent>
@@ -248,14 +250,18 @@ const NerdNotes = (props: props) => {
 
 
     useEffect(()=>{
-        setTimeout(()=>{
+        if (viewRef.current !== null){
             console.log("hljs fired");
-            document.querySelectorAll('pre code').forEach((block) => {
+            (viewRef.current! as Element).querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightBlock(block);
-                });
-        }, 1000)
+                block.addEventListener('mousedown', e=> e.stopPropagation())
+                block.addEventListener('mouseup', e=> e.stopPropagation())
+                block.addEventListener('touchstart', e=> e.stopPropagation())
+                block.addEventListener('touchend', e=> e.stopPropagation())
+            });
+        }
         window.scrollTo(0, 0);
-    }, [props.label, cursor.after]);
+    }, [props.label, cursor.after, data]);
 
     return <Fragment>
         {
