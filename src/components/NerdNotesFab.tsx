@@ -2,7 +2,7 @@ import React, { Fragment, useState, useContext } from "react";
 import SettingsIcon from '@material-ui/icons/Settings';
 import AllNotesIcon from '@material-ui/icons/Inbox';
 import { Fab } from '@material-ui/core';
-import { ReactComponent as RssIcon } from './custom_icons/rss.svg';
+import RssIcon from './custom_icons/rss.png';
 import { ReactComponent as GithubIcon } from './custom_icons/github.svg';
 import NoteTypeContext from "../contexts/NoteTypeContext";
 
@@ -45,7 +45,11 @@ const NerdNotesFab = (props: props) => {
                         right: 20
                     }}>
                         
-                        <RssIcon style={{marginRight: 5, fill: 'white'}}/>
+                        <img src={RssIcon} style={{
+                            width: 24,
+                            height: 24,
+                            marginRight: 5
+                        }} />
                         Switch to News
                     
                     </Fab>
