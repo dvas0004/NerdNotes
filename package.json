@@ -26,6 +26,7 @@
     "react-markdown": "^4.0.8",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.0",
+    "rss-parser": "^3.7.5",
     "typescript": "3.4.5"
   },
   "scripts": {

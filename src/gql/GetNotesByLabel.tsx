@@ -11,7 +11,7 @@ const GetNotesByLabel = (args: funcArgs) => {
         query {
             repository(owner: "dvas0004", name: "NerdNotes"){
                 issues(first: 15, 
-                    ${args.label == "all_notes" ? "" : `labels: [${args.label}],`} 
+                    ${args.label == "all_notes" ? "" : `labels: ["${args.label}"],`} 
                     ${args.after? `after: "${args.after}"` : ""}
                     orderBy:{
                         field: CREATED_AT,

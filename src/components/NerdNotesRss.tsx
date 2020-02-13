@@ -5,11 +5,11 @@ import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Fab, C
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
-import LikeNoteModal from './LikeNoteModal';
+
 import Axios from 'axios';
 import ReactHtmlParser from 'react-html-parser';
 //@ts-ignore
-import hljs from 'highlightjs';
+
 import NerdNotesFab from './NerdNotesFab';
 
 interface props {
@@ -53,18 +53,18 @@ const isScrollable: Function = (target: string) => {
     return false;
 }
 
-const GithubToReddit = (label: string) : string => {
-    const mappings: {[label: string] : string} = {
-        Python: "Python",
-        Java_and_Spring: "Java",
-        JavaScript: "Javascript",
-        SQL: "SQL"
+const GithubToRss = (label: string) : [string] => {
+    const mappings: {[label: string] : [string]} = {
+        InfoSec: ["17077260672311818736/17578478168077360942"],
+        Java_and_Spring: ["Java"],
+        JavaScript: ["Javascript"],
+        SQL: ["SQL"]
     }
 
     return mappings[label];
 }
 
-const NerdNotesReddit = (props: props) => {
+const NerdNotesRss = (props: props) => {
 
     const [data, changeData] = useState();
 
@@ -86,21 +86,7 @@ const NerdNotesReddit = (props: props) => {
         changeShowSwipedNotes(!showSwipedNotes);
     };
 
-    const [showFABOptions, changeShowFABOptions] = useState(false);
-    const toggleShowFABOptions = () => changeShowFABOptions(!showFABOptions);
-
-    const [likeNoteModalOpen, changeLikeNoteModalOpen] = useState(false);
-    const [modalNoteID, changeModalNoteID] = useState("");
-
-    const openLikeNoteModal = (modalNoteID: string) => {
-        changeModalNoteID(modalNoteID);
-        changeLikeNoteModalOpen(true);
-    };
-
-    const closeLikeNoteModal = () => {
-        changeLikeNoteModalOpen(false);
-    }
-
+    
     const [xStart, setXStart] = useState(0)
     const swipeThreshold = 100
 
@@ -154,9 +140,8 @@ const NerdNotesReddit = (props: props) => {
     }
 
     useEffect(() => {
-        const mappedLabel = GithubToReddit(props.label);
-        Axios.get(`https://www.reddit.com/r/ProgrammerTIL/search.json?q=flair_name:\"${mappedLabel}\"&restrict_sr=1`)
-            .then(resp => {changeData(resp.data); setTimeout(()=>hljs.initHighlighting(), 1000); });
+        const fetchRequests = GithubToRss(props.label).map(rssID => Axios.get(`https://www.google.com/alerts/feeds/${rssID}`))
+        Axios.all(fetchRequests).then(resp => console.log(resp))
     },[])
 
 
@@ -266,8 +251,7 @@ const NerdNotesReddit = (props: props) => {
                     }}>
                         {`Next >>`}
                 </Button>: null}
-                <LikeNoteModal isOpen={likeNoteModalOpen} handleClose={closeLikeNoteModal} modalNoteID={modalNoteID}/>
-                <NerdNotesFab toggleShowSwipedNotes={toggleShowSwipedNotes} type="reddit" />
+                <NerdNotesFab toggleShowSwipedNotes={toggleShowSwipedNotes} type="news" />
             </Grid>
         </Grid>
     }
@@ -276,4 +260,4 @@ const NerdNotesReddit = (props: props) => {
 
 }
 
-export default NerdNotesReddit
+export default NerdNotesRss

@@ -6,8 +6,8 @@ import NerdNotesLabels from './NerdNotesLabels';
 import NerdNotes from './NerdNotes';
 import { Route } from 'react-router';
 import { persistCache } from 'apollo-cache-persist';
-import NerdNotesReddit from './NerdNotesReddit';
 import NoteTypeContext from '../contexts/NoteTypeContext';
+import NerdNotesRss from './NerdNotesRss';
 
 //https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
 const RO_TOKEN = "a65de533600259fae0e90a2a4630dd55be67e96b"
@@ -58,9 +58,9 @@ const NerdNotesContainer = () => {
               :
                 null
             }
-            { noteType == "reddit" ? 
+            { noteType == "news" ? 
                 <Route path="/:label" component={ ({match}:{match : any} ) => {
-                    return <NerdNotesReddit label={match.params.label} /> 
+                    return <NerdNotesRss label={match.params.label} /> 
                 }} /> 
               :
                 null
