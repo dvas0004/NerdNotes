@@ -27,7 +27,7 @@ const NerdNotesFab = (props: props) => {
         </Fab>
         { showFABOptions ? 
             <Fragment>
-                {/* { props.type == "news" ? 
+                { props.type == "news" ? 
                     <Fab variant="extended" color="primary" size="small" onClick={()=> noteTypeContext.changeNoteType("github")} style={{
                         position: "fixed",
                         bottom: 130,
@@ -35,7 +35,7 @@ const NerdNotesFab = (props: props) => {
                     }}>
                         
                         <GithubIcon style={{marginRight: 5, fill: 'white'}}/>
-                        Switch to GitHub
+                        Switch to Notes
 
                     </Fab>
                     : 
@@ -49,7 +49,7 @@ const NerdNotesFab = (props: props) => {
                         Switch to News
                     
                     </Fab>
-                    } */}
+                    }
                 <Fab variant="extended" color="primary" size="small" onClick={props.toggleShowSwipedNotes} style={{
                     position: "fixed",
                     bottom: 86,

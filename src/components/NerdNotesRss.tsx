@@ -5,7 +5,7 @@ import { Grid, Typography, Card, CardContent, CardActions, Badge, Button, Fab, C
 import { Link } from 'react-router-dom';
 import isMobile from '../utils/mobileCheck';
 import animateCSS from '../utils/animations';
-
+import Parser from 'rss-parser';
 import Axios from 'axios';
 import ReactHtmlParser from 'react-html-parser';
 //@ts-ignore
@@ -22,7 +22,9 @@ function htmlDecode(input: string) : string|null {
     // handle case of empty input
     return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
   }
+
   
+const parser = new Parser()   
 
 const saveSwiped = (value: Set<String>) => {
     const swipedArray = Array.from(value);
@@ -53,20 +55,30 @@ const isScrollable: Function = (target: string) => {
     return false;
 }
 
-const GithubToRss = (label: string) : [string] => {
-    const mappings: {[label: string] : [string]} = {
-        InfoSec: ["17077260672311818736/17578478168077360942"],
-        Java_and_Spring: ["Java"],
-        JavaScript: ["Javascript"],
-        SQL: ["SQL"]
-    }
 
-    return mappings[label];
+
+const GithubToRss = (label: string) : string[] => {
+    // Deprecating the below - unfortunately we cannot access GOOGLE ALERTS RSS directly since
+    // they restrict access via origin. Instead we found a service that unifies a bunch of feeds
+    // and allows access
+
+    // TODO: seperate the unified feeds and re-introduce th below?
+    // const mappings: {[label: string] : [string]} = {
+    //     InfoSec: ["17077260672311818736/17578478168077360942"],
+    //     Java_and_Spring: ["Java"],
+    //     JavaScript: ["Javascript"],
+    //     SQL: ["SQL"]
+    // }
+
+    // return mappings[label];
+
+    return ['https://zapier.com/engine/rss/1676320/feed-1/', 'https://zapier.com/engine/rss/1676320/feed-2/']
 }
 
 const NerdNotesRss = (props: props) => {
 
-    const [data, changeData] = useState();
+    const defaultData : Parser.Item[] = []
+    const [data, changeData] = useState(defaultData);
 
     const [cursor, changeCursor] = useState({
         start: undefined,
@@ -140,14 +152,22 @@ const NerdNotesRss = (props: props) => {
     }
 
     useEffect(() => {
-        const fetchRequests = GithubToRss(props.label).map(rssID => Axios.get(`https://www.google.com/alerts/feeds/${rssID}`))
-        Axios.all(fetchRequests).then(resp => console.log(resp))
-    },[])
+        const fetchRequests = GithubToRss(props.label).map(rssUrl => Axios.get(rssUrl))
+        let rssEntries : Parser.Item[] = []
+        Axios.all(fetchRequests).then(responses => responses.map( async(resp) => {
+            const rssData = resp.data
+            const rssJson = await parser.parseString(rssData)
+            const rssItems = rssJson.items!
+            return rssItems
+        }).forEach( elem => elem.then( results => {
+            rssEntries = rssEntries.concat(results)
+            changeData(rssEntries)
+        }))
+    )},[])
 
 
     let view = <div>Loading...</div>;
     if (data != null){
-        const posts = data['data']['children'];
         view = <Grid container>
             <Grid item key={props.label} xs={12} style={{height: "auto", padding: 10}}>
                 <Card>
@@ -166,8 +186,8 @@ const NerdNotesRss = (props: props) => {
                 </Card>
             </Grid>
             {
-                posts.filter( (node: any) => showSwipedNotes ? true : !( swipedNotes.has(node.name) ) ).map( (node: any) => 
-                    <Grid item xs={12} md={6} key={node.data.name} id={node.data.name}>
+                data.filter( (node: Parser.Item) => showSwipedNotes ? true : !( swipedNotes.has(node.link!) ) ).map( (node: Parser.Item) => 
+                    <Grid item xs={12} md={6} key={node.guid!} id={node.link!}>
                         <Card   style={{
                                     margin: 5,
                                     overflowX: "auto"
@@ -181,37 +201,22 @@ const NerdNotesRss = (props: props) => {
                         >
                         <CardContent>
                                 <Typography variant="overline" style={{fontSize: 20}}>
-                                    {node.data.title} 
+                                    {node.title} 
                                 </Typography>
                                 <Typography variant="body1">
-                                    {ReactHtmlParser(htmlDecode(node.data.selftext_html)!)}
+                                    {ReactHtmlParser(htmlDecode(node.content!)!)}
                                 </Typography>
                             </CardContent>
                             <CardActions>
                                 <div style={{marginLeft:"auto", marginRight: 20}}>
                                     <span>
-                                        
-                                            <Chip
-                                                // avatar={<Avatar>MB</Avatar>}
-                                                label={node.data.link_flair_text}
-                                                style={{margin: 1}}
-                                            />
-                                                                                            
-                                    </span>
-                                    <span>
                                         <Badge>
                                             <CodeIcon style={{
                                                 cursor: "pointer",
                                                 fontSize: 30
-                                            }} onClick={()=>window.location.assign(node.data.permalink)}/>
+                                            }} onClick={()=>window.location.assign(node.link!)}/>
                                         </Badge>
-                                    </span>
-                                    <span>
-                                        <Badge badgeContent={node.data.score} color="secondary">
-                                            <HeartIcon style={{fontSize: 30}} />
-                                            {/* <HeartIcon style={{fontSize: 30}} onClick={() => openLikeNoteModal(node.resourcePath)}/> */}
-                                        </Badge>
-                                    </span>                                                
+                                    </span>                                          
                                 </div>                                            
                             </CardActions>
                         </Card>
@@ -238,7 +243,7 @@ const NerdNotesRss = (props: props) => {
                 :
                     null
                 }
-                
+{/*                 
                 
                 {data.data.after ? <Button variant="contained" 
                     color="primary" 
@@ -250,7 +255,7 @@ const NerdNotesRss = (props: props) => {
                         });
                     }}>
                         {`Next >>`}
-                </Button>: null}
+                </Button>: null} */}
                 <NerdNotesFab toggleShowSwipedNotes={toggleShowSwipedNotes} type="news" />
             </Grid>
         </Grid>
